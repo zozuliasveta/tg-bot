@@ -1,0 +1,75 @@
+import logging
+import random
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
+
+# Your Telegram bot token from BotFather
+TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+
+# Set up logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# List of dish recipes
+DISH_RECIPES = [
+    'Spaghetti Carbonara',
+    'Chicken Alfredo',
+    'Vegetable Stir-Fry',
+    'Beef Tacos',
+    'Mushroom Risotto',
+    'Baked Salmon',
+    'Chicken Parmesan',
+    'Thai Green Curry',
+    'Pasta Primavera',
+    'Beef and Broccoli',
+]
+
+# List of beverage recipes
+BEVERAGE_RECIPES = [
+    'Classic Margarita',
+    'Mojito',
+    'Strawberry Smoothie',
+    'Iced Coffee',
+    'Blueberry Lemonade',
+    'Piña Colada',
+    'Mango Lassi',
+    'Mint Julep',
+    'Orange Julius',
+    'Watermelon Cooler',
+]
+
+# Command handler for /start
+def start(update: Update, _: CallbackContext) -> None:
+    user = update.effective_user
+    update.message.reply_text(f'Hello, {user.mention_html()}! I am your Recipe Bot. '
+                              f'Use /dish to get a dish recipe, '
+                              f'and /beverage to get a beverage recipe.')
+
+# Command handler for /dish
+def dish_recipe(update: Update, _: CallbackContext) -> None:
+    dish = random.choice(DISH_RECIPES)
+    update.message.reply_text(f'Dish Recipe: {dish}')
+
+# Command handler for /beverage
+def beverage_recipe(update: Update, _: CallbackContext) -> None:
+    beverage = random.choice(BEVERAGE_RECIPES)
+    update.message.reply_text(f'Beverage Recipe: {beverage}')
+
+def main() -> None:
+    updater = Updater(TOKEN)
+
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
+
+    # Register command handlers
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("dish", dish_recipe))
+    dp.add_handler(CommandHandler("beverage", beverage_recipe))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until the user presses Ctrl-C
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
